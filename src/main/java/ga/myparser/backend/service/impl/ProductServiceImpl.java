@@ -62,24 +62,27 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ArrayList<String> saveProducts(ArrayList<String> listProductsToParse) {
-        try {
+        {
             for (String productURL : listProductsToParse) {
 
-                Document doc = Jsoup.connect(productURL).get();
+                int parsProductId = parsProduct.getProductIdFromUrl(productURL);
 
-                String productName = parsProduct.getName(doc);
-                ArrayList<String> listURLsImages = parsProduct.getListURLsImages(doc);
-                parsProduct.uploadImages(listURLsImages, productName);
-                LinkedHashSet<Integer> listOptions = parsProduct.getOptions(doc);
-                int price = parsProduct.getPrice(doc);
-                Map<String, String> mapTable = parsProduct.getMapTable(doc);
+
+//                Document doc = Jsoup.connect(productURL).get();
+//
+//                String productName = parsProduct.getName(doc);
+//                ArrayList<String> listURLsImages = parsProduct.getListURLsImages(doc);
+//                parsProduct.uploadImages(listURLsImages, productName);
+//                LinkedHashSet<Integer> listOptions = parsProduct.getOptions(doc);
+//                int price = parsProduct.getPrice(doc);
+//                Map<String, String> mapTable = parsProduct.getMapTable(doc);
 
 //                Product product = new Product(listOptions);
 //                productDAO.save(product);
             }
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        return listProductsToParse;
-    }
+//        } catch (IOException e){
+//            e.printStackTrace();
+//        }
+            return listProductsToParse;
+        }}
 }

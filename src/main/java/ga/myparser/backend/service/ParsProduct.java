@@ -20,4 +20,6 @@ public interface ParsProduct {
     int getPrice(Document doc);
 
     Map<String,String> getMapTable(Document doc);
+
+    int getProductIdFromUrl(String productURL);
 }

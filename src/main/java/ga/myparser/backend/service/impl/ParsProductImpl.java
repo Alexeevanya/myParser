@@ -38,6 +38,12 @@ public class ParsProductImpl implements ParsProduct {
     }
 
     @Override
+    public int getProductIdFromUrl(String productURL) {
+        String[] parts = productURL.split("[-/]");
+        return Integer.parseInt(parts[5]);
+    }
+
+    @Override
     public ArrayList<String> getListURLsImages(Document doc) {
         ArrayList listImages = new ArrayList();
         Elements elements = doc.select("div.album");
