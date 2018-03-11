@@ -83,12 +83,16 @@ public class ParsProductImpl implements ParsProduct {
     public void uploadImages(ArrayList<String> listURLsImages, String productName) throws IOException {
         int iterator = 1;
         FTPClient ftpClient = new FTPClient();
+        ftpClient.setControlEncoding("CP1251");
         ftpClient.connect(server, port);
         ftpClient.login(user, pass);
         ftpClient.enterLocalPassiveMode();
 
         for (String URLImg : listURLsImages) {
-            productName = productName.replace('/','-').replace(' ', '-');
+            productName = productName.replace('/','-')
+                    .replace(' ', '-')
+                    .replace("\"", "")
+                    .replace(".","");
             String fileName = productName + "-" + iterator++ + ".jpg";
 
             String remoteFile = "/sneakers.net.ua/www/image/new-image/" + fileName;
