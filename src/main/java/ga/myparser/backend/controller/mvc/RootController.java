@@ -20,13 +20,13 @@ public class RootController {
     @RequestMapping("/")
     public String index() throws IOException {
 
-        Document listCategory = Jsoup.connect("http://free-run.kiev.ua/catalog/muzhskie-mokasiny-ugg").get();
+        Document listCategory = Jsoup.connect("http://free-run.kiev.ua/catalog/adidas-gazelleneo").get();
 
         List<String> listCategoryToParse = productService.getListCategoryToParse(listCategory);
 
         ArrayList<String> listProductsToParse = productService.getListProductsToParse(listCategoryToParse);
 
-        ArrayList<String> resultList = productService.saveProducts(listProductsToParse);
+        productService.parseProducts(listProductsToParse);
 
         return "index";
     }
