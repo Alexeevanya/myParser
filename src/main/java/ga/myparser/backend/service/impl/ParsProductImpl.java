@@ -45,7 +45,7 @@ public class ParsProductImpl implements ParsProduct {
 
     @Override
     public ArrayList<String> getListURLsImages(Document doc) {
-        ArrayList listImages = new ArrayList();
+        ArrayList<String> listImages = new ArrayList<>();
         Elements elements = doc.select("div.album");
         for (Element element : elements.select("a.fancybox")) {
             listImages.add("http://free-run.kiev.ua/" + element.attr("href"));
@@ -55,10 +55,11 @@ public class ParsProductImpl implements ParsProduct {
 
     @Override
     public LinkedHashSet<Integer> getOptions(Document doc) {
-        LinkedHashSet listOptions = new LinkedHashSet();
+        LinkedHashSet<Integer> listOptions = new LinkedHashSet<>();
         Elements elements = doc.select("div.actions");
         for (Element element : elements.select("option")) {
-            listOptions.add(Integer.parseInt(element.text()));
+            int valueOption = (int)Double.parseDouble(element.text());
+            listOptions.add(valueOption);
         }
         return listOptions;
     }

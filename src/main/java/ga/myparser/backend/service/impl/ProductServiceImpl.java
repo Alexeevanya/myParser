@@ -1,9 +1,9 @@
 package ga.myparser.backend.service.impl;
 
 import ga.myparser.backend.dao.ProductDAO;
-import ga.myparser.backend.domain.Product;
 import ga.myparser.backend.service.ParsProduct;
 import ga.myparser.backend.service.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
+@Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -61,28 +61,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ArrayList<String> saveProducts(ArrayList<String> listProductsToParse) {
+    public void parseProducts(ArrayList<String> listProductsToParse) {
         {
             for (String productURL : listProductsToParse) {
 
-                int parsProductId = parsProduct.getProductIdFromUrl(productURL);
+                int frProductId = parsProduct.getProductIdFromUrl(productURL);
+                List<Integer> myProductId = productDAO.getMyIdByFRId(frProductId);
 
-
-//                Document doc = Jsoup.connect(productURL).get();
-//
-//                String productName = parsProduct.getName(doc);
-//                ArrayList<String> listURLsImages = parsProduct.getListURLsImages(doc);
-//                parsProduct.uploadImages(listURLsImages, productName);
-//                LinkedHashSet<Integer> listOptions = parsProduct.getOptions(doc);
-//                int price = parsProduct.getPrice(doc);
-//                Map<String, String> mapTable = parsProduct.getMapTable(doc);
-
-//                Product product = new Product(listOptions);
-//                productDAO.save(product);
+                if(!myProductId.isEmpty()){
+                    Document doc = null;
+                    try {
+                        doc = Jsoup.connect(productURL).get();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    LinkedHashSet<Integer> listOptions = parsProduct.getOptions(doc);
+                    for (Integer optionText : listOptions) {
+                        //todo DAO update options
+                    }
+                } else {
+                    log.info("Don't match");
+                }
             }
-//        } catch (IOException e){
-//            e.printStackTrace();
-//        }
-            return listProductsToParse;
         }}
 }

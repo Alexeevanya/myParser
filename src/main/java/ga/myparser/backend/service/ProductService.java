@@ -11,6 +11,6 @@ public interface ProductService {
 
     ArrayList<String> getListProductsToParse(List<String> listCategoryToParse);
 
-    ArrayList<String> saveProducts(ArrayList<String> listProductsToParse);
+    void parseProducts(ArrayList<String> listProductsToParse);
 
 }

@@ -15,7 +15,7 @@ public interface ParsProduct {
 
     void uploadImages(ArrayList<String> listURLsImages, String productName) throws IOException;
 
-    LinkedHashSet<Integer> getOptions(Document doc);
+    LinkedHashSet getOptions(Document doc);
 
     int getPrice(Document doc);
 
