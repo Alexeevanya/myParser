@@ -21,7 +21,6 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductDAO productDAO;
-
     private final ParsProduct parsProduct;
 
     @Autowired
@@ -62,26 +61,30 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void parseProducts(ArrayList<String> listProductsToParse) {
-        {
-            for (String productURL : listProductsToParse) {
+        for (String productURL : listProductsToParse) {
 
-                int frProductId = parsProduct.getProductIdFromUrl(productURL);
-                List<Integer> myProductId = productDAO.getMyIdByFRId(frProductId);
+            int frProductId = parsProduct.getProductIdFromUrl(productURL);
+            List<Integer> listMyProductId = productDAO.getMyIdByFrId(frProductId);
 
-                if(!myProductId.isEmpty()){
-                    Document doc = null;
-                    try {
-                        doc = Jsoup.connect(productURL).get();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            if(!listMyProductId.isEmpty()){
+                Document doc = null;
+                try {
+                    doc = Jsoup.connect(productURL).get();
+                } catch (IOException e) {
+                    log.warn("Can't connect to product url - {}", productURL);
+                }
+                LinkedHashSet<Integer> listOptions = parsProduct.getOptions(doc);
+
+                if(listOptions != null){
+                    for (Integer myProductId : listMyProductId) {
+                        int optionId = 13;
+                        productDAO.deleteOldOptions(myProductId, optionId);
+                        for (Integer valueOption : listOptions) {
+                            productDAO.updateOptions(myProductId, optionId, valueOption);
+                        }
                     }
-                    LinkedHashSet<Integer> listOptions = parsProduct.getOptions(doc);
-                    for (Integer optionText : listOptions) {
-                        //todo DAO update options
-                    }
-                } else {
-                    log.info("Don't match");
                 }
             }
-        }}
+        }
+    }
 }
