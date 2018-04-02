@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
-    public List<Integer> getMyIdByFRId(int frId) {
+    public List<Integer> getMyIdByFrId(int frId) {
         Query query = em.createQuery("select m.myProductId from MyProductIdToFreeRunId m where m.freRunProductId = :frId");
         query.setParameter("frId", frId);
 
@@ -32,5 +33,20 @@ public class ProductDAOImpl implements ProductDAO {
         } catch (NoResultException e){
             return Collections.emptyList();
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteOldOptions(int productId, int optionId) {
+        Query query = em.createQuery("delete from ProductOptionValue where productId= :productId and optionId= :optionId");
+        query.setParameter("productId", productId)
+                .setParameter("optionId", optionId)
+                .executeUpdate();
+    }
+
+    @Override
+    public void updateOptions(int productId, int optionId, int valueOption) {
+        Query query = em.createNativeQuery("INSERT INTO oc_product_option_value VALUES" +
+                "(,227,65,13,55,1000,1,0.0000,+,0,+,0.00000000,+)");
     }
 }

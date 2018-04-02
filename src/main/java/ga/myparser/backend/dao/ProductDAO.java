@@ -8,5 +8,9 @@ public interface ProductDAO {
 
     void save(Product product);
 
-    List<Integer> getMyIdByFRId(int frId);
+    List<Integer> getMyIdByFrId(int frId);
+
+    void updateOptions(int productId, int optionId, int valueOption);
+
+    void deleteOldOptions(int productId, int optionId);
 }
