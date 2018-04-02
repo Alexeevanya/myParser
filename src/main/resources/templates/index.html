@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>MyParser.ga</title>
@@ -7,9 +7,14 @@
 <body>
 <h1>My Parser</h1>
 <p>input category</p>
-<label>
-    <input type="text" size="40">
-</label>
-<button>parse</button>
+<form action="/" method="POST">
+    <label>
+        <input name="categoryURL" type="text" size="40">
+    </label>
+    <button type="submit">parse</button>
+</form>
+<th:block th:if="${listProductsToParse} != null">
+    <p>success=)</p>
+</th:block>
 </body>
 </html>
