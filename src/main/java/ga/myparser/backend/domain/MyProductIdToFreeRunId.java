@@ -1,6 +1,7 @@
 package ga.myparser.backend.domain;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -16,10 +17,11 @@ import java.io.Serializable;
 public class MyProductIdToFreeRunId implements Serializable {
 
     @Id
+    @NonNull
     @Column(name = "sneakers_id")
     private int myProductId;
 
-    @Id
+    @NonNull
     @Column(name = "free_run_id")
     private int freRunProductId;
 }
