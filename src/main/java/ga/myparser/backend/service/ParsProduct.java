@@ -3,19 +3,19 @@ package ga.myparser.backend.service;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface ParsProduct {
 
     String getName(Document doc);
 
-    ArrayList<String> getListURLsImages(Document doc);
+    List<String> getListURLsImages(Document doc);
 
-    void uploadImages(ArrayList<String> listURLsImages, String productName) throws IOException;
+    void uploadImages(List<String> listURLsImages, String productName) throws IOException;
 
-    LinkedHashSet getOptions(Document doc);
+    Set getOptions(Document doc);
 
     int getPrice(Document doc);
 

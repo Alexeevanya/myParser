@@ -45,8 +45,21 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
-    public void updateOptions(int productId, int optionId, int valueOption) {
+    public int getProductOptionId(Integer productId) {
+        Query query = em.createQuery("select p.productOptionId from ProductOption p where p.productId= :productId");
+        query.setParameter("productId", productId);
+        return (int) query.getSingleResult();
+    }
+
+    @Override
+    @Transactional
+    public void updateOptions(int productId, int productOptionId, int optionId, int optionValueId) {
         Query query = em.createNativeQuery("INSERT INTO oc_product_option_value VALUES" +
-                "(,227,65,13,55,1000,1,0.0000,+,0,+,0.00000000,+)");
+                "(DEFAULT ,?,?,?,?,1000,1,0.0000,'+',0,'+',0.00000000,'+')")
+                .setParameter(1, productOptionId)
+                .setParameter(2, productId)
+                .setParameter(3, optionId)
+                .setParameter(4, optionValueId);
+        query.executeUpdate();
     }
 }

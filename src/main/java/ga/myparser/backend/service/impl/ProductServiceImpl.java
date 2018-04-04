@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -30,9 +31,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ArrayList<String> getListCategoryToParse(Document category) {
+    public List<String> getListCategoryToParse(Document category) {
         Elements elements = category.select("div.oPager");
-        ArrayList<String> listCategoryToParse = new ArrayList<>();
+        List<String> listCategoryToParse = new ArrayList<>();
         listCategoryToParse.add(category.location());
         for (Element element : elements.select("a")) {
             listCategoryToParse.add("http://free-run.kiev.ua/" + element.attr("href"));
@@ -41,9 +42,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ArrayList<String> getListProductsToParse(List<String> listCategoryToParse) {
+    public List<String> getListProductsToParse(List<String> listCategoryToParse) {
         Document doc;
-        ArrayList<String> listProductsToParse = new ArrayList<>();
+        List<String> listProductsToParse = new ArrayList<>();
 
         for(String cat : listCategoryToParse){
             try {
@@ -60,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void parseProducts(ArrayList<String> listProductsToParse) {
+    public void parseProducts(List<String> listProductsToParse) {
         for (String productURL : listProductsToParse) {
 
             int frProductId = parsProduct.getProductIdFromUrl(productURL);
@@ -73,18 +74,26 @@ public class ProductServiceImpl implements ProductService {
                 } catch (IOException e) {
                     log.warn("Can't connect to product url - {}", productURL);
                 }
-                LinkedHashSet<Integer> listOptions = parsProduct.getOptions(doc);
+                Set<Integer> listOptions = parsProduct.getOptions(doc);
+                Set<Integer> listOptionsValuesIds = getOptionsValuesIds(listOptions);
 
-                if(listOptions != null){
-                    for (Integer myProductId : listMyProductId) {
+                if(listOptionsValuesIds != null){
+                    for (Integer productId : listMyProductId) {
                         int optionId = 13;
-                        productDAO.deleteOldOptions(myProductId, optionId);
-                        for (Integer valueOption : listOptions) {
-                            productDAO.updateOptions(myProductId, optionId, valueOption);
+                        productDAO.deleteOldOptions(productId, optionId);
+                        int productOptionId = productDAO.getProductOptionId(productId);
+                        for (Integer optionValueId : listOptionsValuesIds) {
+                            productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
+                            log.info("here {}", productId);
                         }
                     }
                 }
             }
         }
+    }
+
+    private Set<Integer> getOptionsValuesIds(Set<Integer> listOptions) {
+        //todo change values to id
+        return listOptions;
     }
 }

@@ -42,7 +42,7 @@ public class RootController {
 
         List<String> listCategoryToParse = productService.getListCategoryToParse(listCategory);
 
-        ArrayList<String> listProductsToParse = productService.getListProductsToParse(listCategoryToParse);
+        List<String> listProductsToParse = productService.getListProductsToParse(listCategoryToParse);
 
         productService.parseProducts(listProductsToParse);
 

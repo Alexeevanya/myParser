@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ParsProductImpl implements ParsProduct {
@@ -44,8 +41,8 @@ public class ParsProductImpl implements ParsProduct {
     }
 
     @Override
-    public ArrayList<String> getListURLsImages(Document doc) {
-        ArrayList<String> listImages = new ArrayList<>();
+    public List<String> getListURLsImages(Document doc) {
+        List<String> listImages = new ArrayList<>();
         Elements elements = doc.select("div.album");
         for (Element element : elements.select("a.fancybox")) {
             listImages.add("http://free-run.kiev.ua/" + element.attr("href"));
@@ -54,8 +51,8 @@ public class ParsProductImpl implements ParsProduct {
     }
 
     @Override
-    public LinkedHashSet<Integer> getOptions(Document doc) {
-        LinkedHashSet<Integer> listOptions = new LinkedHashSet<>();
+    public Set<Integer> getOptions(Document doc) {
+        Set<Integer> listOptions = new HashSet<>();
         Elements elements = doc.select("div.actions");
         for (Element element : elements.select("option")) {
             int valueOption = (int)Double.parseDouble(element.text());
@@ -87,7 +84,7 @@ public class ParsProductImpl implements ParsProduct {
     }
 
     @Override
-    public void uploadImages(ArrayList<String> listURLsImages, String productName) throws IOException {
+    public void uploadImages(List<String> listURLsImages, String productName) throws IOException {
         int iterator = 1;
         FTPClient ftpClient = new FTPClient();
         ftpClient.setControlEncoding("CP1251");

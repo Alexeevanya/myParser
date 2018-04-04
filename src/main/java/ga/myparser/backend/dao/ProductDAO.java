@@ -10,7 +10,9 @@ public interface ProductDAO {
 
     List<Integer> getMyIdByFrId(int frId);
 
-    void updateOptions(int productId, int optionId, int valueOption);
-
     void deleteOldOptions(int productId, int optionId);
+
+    int getProductOptionId(Integer productId);
+
+    void updateOptions(int productId, int productOptionId, int optionId, int optionValueId);
 }
