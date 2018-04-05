@@ -1,7 +1,6 @@
 package ga.myparser.backend.dao.impl;
 
 import ga.myparser.backend.dao.ProductDAO;
-import ga.myparser.backend.domain.Product;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -17,11 +16,6 @@ public class ProductDAOImpl implements ProductDAO {
 
     @PersistenceContext
     private EntityManager em;
-
-    @Override
-    public void save(Product product) {
-        em.persist(product);
-    }
 
     @Override
     public List<Integer> getMyIdByFrId(int frId) {
@@ -55,7 +49,7 @@ public class ProductDAOImpl implements ProductDAO {
     @Transactional
     public void updateOptions(int productId, int productOptionId, int optionId, int optionValueId) {
         Query query = em.createNativeQuery("INSERT INTO oc_product_option_value VALUES" +
-                "(DEFAULT ,?,?,?,?,1000,1,0.0000,'+',0,'+',0.00000000,'+')")
+                "(DEFAULT,?,?,?,?,1000,1,0.0000,'+',0,'+',0.00000000,'+')")
                 .setParameter(1, productOptionId)
                 .setParameter(2, productId)
                 .setParameter(3, optionId)
