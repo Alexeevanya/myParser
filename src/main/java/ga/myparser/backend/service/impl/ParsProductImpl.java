@@ -1,6 +1,7 @@
 package ga.myparser.backend.service.impl;
 
 import ga.myparser.backend.service.ParsProduct;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,6 +14,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
+@Slf4j
 @Service
 public class ParsProductImpl implements ParsProduct {
     private static final double DOLLAR_RATE = 28.7;
@@ -54,9 +56,17 @@ public class ParsProductImpl implements ParsProduct {
     public Set<Integer> getOptions(Document doc) {
         Set<Integer> listOptions = new HashSet<>();
         Elements elements = doc.select("div.actions");
-        for (Element element : elements.select("option")) {
-            int valueOption = (int)Double.parseDouble(element.text());
-            listOptions.add(valueOption);
+        try {
+            for (Element element : elements.select("option")) {
+                int valueOption = (int)Double.parseDouble(element.text());
+                listOptions.add(valueOption);
+            }
+        } catch (NumberFormatException e) {
+            log.warn("NumberFormatException {}", doc.location());
+        }
+        if(listOptions.isEmpty()){
+            log.warn("Empty list options {}", doc.location());
+            return Collections.EMPTY_SET;
         }
         return listOptions;
     }
