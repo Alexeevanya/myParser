@@ -119,20 +119,21 @@ public class ProductServiceImpl implements ProductService {
                     log.warn("Can't connect to product url - {}", productURL);
                 }
                 Set<Integer> listOptions = parsProduct.getOptions(doc);
-                Set<Integer> listOptionsValuesIds = convertOptionsValuesToIds(listOptions);
+                if (!listOptions.isEmpty()) {
+                    Set<Integer> listOptionsValuesIds = convertOptionsValuesToIds(listOptions);
+                    if (listOptionsValuesIds != null) {
+                        for (Integer productId : listMyProductId) {
+                            int optionId = 13;
+                            productDAO.deleteOldOptions(productId, optionId);
+                            int productOptionId = productDAO.getProductOptionId(productId);
 
-                if(listOptionsValuesIds != null){
-                    for (Integer productId : listMyProductId) {
-                        int optionId = 13;
-                        productDAO.deleteOldOptions(productId, optionId);
-                        int productOptionId = productDAO.getProductOptionId(productId);
-
-                        for (Integer optionValueId : listOptionsValuesIds) {
-                            productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
-                            log.info("Updated in product id {}", productId);
+                            for (Integer optionValueId : listOptionsValuesIds) {
+                                productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
+                                log.info("Updated in product id {}", productId);
+                            }
                         }
+                        updatedOptionsList.add(productURL);
                     }
-                    updatedOptionsList.add(productURL);
                 }
             }
         }
