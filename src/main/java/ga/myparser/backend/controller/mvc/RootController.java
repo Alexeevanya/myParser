@@ -29,9 +29,9 @@ public class RootController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public String parseCategory(Model model, @RequestParam String categoryURL){
 
-        productService.startParseCategory(categoryURL);
+        List<String> listUpdatedProducts = productService.startParseCategory(categoryURL);
 
-        model.addAttribute("listProductsToParse", categoryURL);
+        model.addAttribute("listUpdatedProducts", listUpdatedProducts);
 
         return "index";
     }

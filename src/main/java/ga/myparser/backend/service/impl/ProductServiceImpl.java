@@ -14,10 +14,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -28,7 +25,7 @@ public class ProductServiceImpl implements ProductService {
     private final ParsProduct parsProduct;
 
     @Override
-    public void startParseCategory(String categoryURL) {
+    public List<String> startParseCategory(String categoryURL) {
         if(!Utils.urlIsValid(categoryURL)){
             throw new URLNotValidException(categoryURL);
         }
@@ -44,7 +41,13 @@ public class ProductServiceImpl implements ProductService {
 
         List<String> listProductsToParse = getListProductsToParse(listCategoryToParse);
 
-        parseProducts(listProductsToParse);
+        List<String> successList = parseProducts(listProductsToParse);
+
+        if(successList.isEmpty()){
+            successList = new ArrayList<>();
+            successList.add("There are no matching items to update options");
+        }
+        return successList;
     }
 
     @Override
@@ -78,7 +81,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void parseProducts(List<String> listProductsToParse) {
+    public List<String> parseProducts(List<String> listProductsToParse) {
+        List<String> updatedOptionsList = new ArrayList<>();
         for (String productURL : listProductsToParse) {
 
             int frProductId = parsProduct.getProductIdFromUrl(productURL);
@@ -105,8 +109,14 @@ public class ProductServiceImpl implements ProductService {
                             log.info("Updated in product id {} this options {}", productId, optionId);
                         }
                     }
+                    updatedOptionsList.add(productURL);
                 }
             }
+        }
+        if(updatedOptionsList.isEmpty()){
+            return Collections.emptyList();
+        } else {
+            return updatedOptionsList;
         }
     }
 

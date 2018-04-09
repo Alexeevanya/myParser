@@ -20,7 +20,7 @@
             <div class="form-group col-lg-7 mx-auto text-primary">
                 <form action="/" method="POST">
                     <label>
-                        <input class="form-control" name="categoryURL" type="text" />
+                        <input class="form-control" name="categoryURL" type="text"/>
                     </label>
                     <button class="btn btn-xs btn-primary" type="submit" style="margin-bottom: 3px;">parse</button>
                 </form>
@@ -29,9 +29,23 @@
                 <div class="col-lg-12 mx-auto">
                     <p><span th:text="${notValidUrl}"></span> - is not valid url</p>
                 </div>
-            </th:block><th:block th:if="${listProductsToParse} != null">
-                <div class="col-lg-12 mx-auto">
-                    <p>success=)</p>
+            </th:block>
+            <th:block th:if="${listUpdatedProducts} != null">
+                <div class="col-lg-6 mx-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Product options have been updated from these URLs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <th:block th:each="url : ${listUpdatedProducts}">
+                                <tr>
+                                    <td th:text="${url}">http://domain.com/</td>
+                                </tr>
+                            </th:block>
+                        </tbody>
+                    </table>
                 </div>
             </th:block>
         </div>

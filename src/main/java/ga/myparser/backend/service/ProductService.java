@@ -10,7 +10,7 @@ public interface ProductService {
 
     List<String> getListProductsToParse(List<String> listCategoryToParse);
 
-    void parseProducts(List<String> listProductsToParse);
+    List<String> parseProducts(List<String> listProductsToParse);
 
-    void startParseCategory(String categoryURL);
+    List<String> startParseCategory(String categoryURL);
 }
