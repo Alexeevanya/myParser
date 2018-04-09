@@ -25,19 +25,21 @@ public class ProductServiceImpl implements ProductService {
     private final ParsProduct parsProduct;
 
     @Override
-    public List<String> startParseCategory(String categoryURL) {
-        if(!Utils.urlIsValid(categoryURL)){
-            throw new URLNotValidException(categoryURL);
+    public List<String> startParseCatalog(String catalogURL) {
+        if(!Utils.urlIsValid(catalogURL)){
+            throw new URLNotValidException(catalogURL);
         }
 
-        Document listCategory = null;
+        Document catalogURLs = null;
         try {
-            listCategory = Jsoup.connect(categoryURL).get();
+            catalogURLs = Jsoup.connect(catalogURL).get();
         } catch (IOException e) {
-            log.warn("Can't parse URL {}", categoryURL);
+            log.warn("Can't parse URL {}", catalogURL);
         }
 
-        List<String> listCategoryToParse = getListCategoryToParse(listCategory);
+        List<String> listCatalogToParse = getListCatalogToParse(catalogURLs);
+
+        List<String> listCategoryToParse = getListCategoryToParse(listCatalogToParse);
 
         List<String> listProductsToParse = getListProductsToParse(listCategoryToParse);
 
@@ -51,12 +53,33 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<String> getListCategoryToParse(Document category) {
-        Elements elements = category.select("div.oPager");
+    public List<String> getListCatalogToParse(Document listCatalog) {
+        List<String> catalogUrls = new ArrayList<>();
+        Elements elements = listCatalog.select("div.item");
+        for (Element element : elements.select("div.img").select("a")) {
+            catalogUrls.add("http://free-run.kiev.ua/" + element.attr("href"));
+        }
+        return catalogUrls;
+    }
+
+    @Override
+    public List<String> getListCategoryToParse(List<String> listCatalogToParse) {
+        Document doc;
         List<String> listCategoryToParse = new ArrayList<>();
-        listCategoryToParse.add(category.location());
-        for (Element element : elements.select("a")) {
-            listCategoryToParse.add("http://free-run.kiev.ua/" + element.attr("href"));
+        for (String catalogUrl : listCatalogToParse) {
+            try {
+                doc = Jsoup.connect(catalogUrl).get();
+                Elements elements = doc.select("div.oPager");
+                listCategoryToParse.add(doc.location());
+                for (Element element : elements.select("a")) {
+                    listCategoryToParse.add("http://free-run.kiev.ua/" + element.attr("href"));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if(listCatalogToParse.isEmpty()){
+            System.out.println("123123123123");
         }
         return listCategoryToParse;
     }
@@ -106,7 +129,7 @@ public class ProductServiceImpl implements ProductService {
 
                         for (Integer optionValueId : listOptionsValuesIds) {
                             productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
-                            log.info("Updated in product id {} this options {}", productId, optionId);
+                            log.info("Updated in product id {}", productId);
                         }
                     }
                     updatedOptionsList.add(productURL);
