@@ -1,8 +1,10 @@
 package ga.myparser.backend.service.impl;
 
 import ga.myparser.backend.dao.ProductDAO;
+import ga.myparser.backend.exception.URLNotValidException;
 import ga.myparser.backend.service.ParsProduct;
 import ga.myparser.backend.service.ProductService;
+import ga.myparser.backend.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -24,11 +26,12 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductDAO productDAO;
     private final ParsProduct parsProduct;
-    private final ProductService productService;
 
     @Override
     public void startParseCategory(String categoryURL) {
-
+        if(!Utils.urlIsValid(categoryURL)){
+            throw new URLNotValidException(categoryURL);
+        }
 
         Document listCategory = null;
         try {
@@ -37,11 +40,11 @@ public class ProductServiceImpl implements ProductService {
             log.warn("Can't parse URL {}", categoryURL);
         }
 
-        List<String> listCategoryToParse = productService.getListCategoryToParse(listCategory);
+        List<String> listCategoryToParse = getListCategoryToParse(listCategory);
 
-        List<String> listProductsToParse = productService.getListProductsToParse(listCategoryToParse);
+        List<String> listProductsToParse = getListProductsToParse(listCategoryToParse);
 
-        productService.parseProducts(listProductsToParse);
+        parseProducts(listProductsToParse);
     }
 
     @Override

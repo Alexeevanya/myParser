@@ -29,7 +29,11 @@
                     <button class="btn btn-xs btn-primary" type="submit" style="margin-bottom: 3px;">parse</button>
                 </form>
             </div>
-            <th:block th:if="${listProductsToParse} != null">
+            <th:block th:if="${notValidUrl} != null">
+                <div class="col-lg-12 mx-auto">
+                    <p><span th:text="${notValidUrl}"></span> - is not valid</p>
+                </div>
+            </th:block><th:block th:if="${listProductsToParse} != null">
                 <div class="col-lg-12 mx-auto">
                     <p>success=)</p>
                 </div>
