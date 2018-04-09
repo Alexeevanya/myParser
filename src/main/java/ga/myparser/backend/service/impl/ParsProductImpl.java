@@ -17,7 +17,7 @@ import java.util.*;
 @Slf4j
 @Service
 public class ParsProductImpl implements ParsProduct {
-    private static final double DOLLAR_RATE = 28.7;
+    private double dollarRate;
 
     @Value("${custom.ftp.server}")
     private String server;
@@ -40,6 +40,11 @@ public class ParsProductImpl implements ParsProduct {
     public int getProductIdFromUrl(String productURL) {
         String[] parts = productURL.split("[-/]");
         return Integer.parseInt(parts[5]);
+    }
+
+    @Override
+    public void setDollarRate(Double dollarRate) {
+        this.dollarRate = dollarRate;
     }
 
     @Override
@@ -77,7 +82,7 @@ public class ParsProductImpl implements ParsProduct {
                 .select("div.price")
                 .select("span")
                 .text());
-        return (int) (price * DOLLAR_RATE + 250);
+        return (int) (price * dollarRate + 250);
     }
 
     @Override

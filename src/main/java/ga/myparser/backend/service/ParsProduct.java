@@ -22,4 +22,6 @@ public interface ParsProduct {
     Map<String,String> getMapTable(Document doc);
 
     int getProductIdFromUrl(String productURL);
+
+    void setDollarRate(Double dollarRate);
 }

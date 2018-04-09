@@ -1,5 +1,6 @@
 package ga.myparser.backend.controller.mvc;
 
+import ga.myparser.backend.service.ParsProduct;
 import ga.myparser.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +19,17 @@ public class RootController {
 
     private final ProductService productService;
 
+    private final ParsProduct parsProduct;
+
     @RequestMapping("/")
     public String index() {
         return "index";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String parseCategory(Model model, @RequestParam String catalogURL){
+    public String parseCategory(Model model, @RequestParam String catalogURL, @RequestParam Double dollarRate){
+
+        parsProduct.setDollarRate(dollarRate);
 
         List<String> listUpdatedProducts = productService.startParseCatalog(catalogURL);
 
