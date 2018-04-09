@@ -24,7 +24,25 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductDAO productDAO;
     private final ParsProduct parsProduct;
+    private final ProductService productService;
 
+    @Override
+    public void startParseCategory(String categoryURL) {
+
+
+        Document listCategory = null;
+        try {
+            listCategory = Jsoup.connect(categoryURL).get();
+        } catch (IOException e) {
+            log.warn("Can't parse URL {}", categoryURL);
+        }
+
+        List<String> listCategoryToParse = productService.getListCategoryToParse(listCategory);
+
+        List<String> listProductsToParse = productService.getListProductsToParse(listCategoryToParse);
+
+        productService.parseProducts(listProductsToParse);
+    }
 
     @Override
     public List<String> getListCategoryToParse(Document category) {

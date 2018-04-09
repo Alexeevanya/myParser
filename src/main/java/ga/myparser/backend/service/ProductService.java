@@ -12,4 +12,5 @@ public interface ProductService {
 
     void parseProducts(List<String> listProductsToParse);
 
+    void startParseCategory(String categoryURL);
 }

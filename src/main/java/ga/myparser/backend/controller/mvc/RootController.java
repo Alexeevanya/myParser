@@ -29,20 +29,9 @@ public class RootController {
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public String parseCategory(Model model, @RequestParam String categoryURL){
 
-        Document listCategory = null;
-        try {
-            listCategory = Jsoup.connect(categoryURL).get();
-        } catch (IOException e) {
-            log.warn("Can't parse URL {}", categoryURL);
-        }
+        productService.startParseCategory(categoryURL);
 
-        List<String> listCategoryToParse = productService.getListCategoryToParse(listCategory);
-
-        List<String> listProductsToParse = productService.getListProductsToParse(listCategoryToParse);
-
-        productService.parseProducts(listProductsToParse);
-
-        model.addAttribute("listProductsToParse", listProductsToParse);
+        model.addAttribute("listProductsToParse", categoryURL);
 
         return "index";
     }
