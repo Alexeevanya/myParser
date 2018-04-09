@@ -1,38 +1,41 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
-    <meta charset="UTF-8">
-    <title>MyParser.ga</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login - MyParser.ga</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
+
 </head>
 
-<body>
+<body id="page-top">
+
 <header class="masthead text-center text-white d-flex">
     <div class="container my-auto">
         <div class="row">
-            <div class="col-lg-12 mx-auto">
-                <h1>
-                    <strong>My Parser</strong>
-                </h1>
-                <hr>
-            </div>
-            <div class="col-lg-7 mx-auto">
-                <form action="/" method="POST">
-                    <label>
-                        <input name="categoryURL" type="text" size="40">
-                    </label>
-                    <button type="submit">parse</button>
+            <div class="col-lg-5 mx-auto">
+                <form th:action="@{/login}" method="POST">
+                    <div class="form-group">
+                        <h2>Sign In</h2>
+                        <div class="form-group col-lg-9 mx-auto text-primary">
+                            <input name="username" type="text" class="form-control form-default" placeholder="Username"
+                                   autofocus="true"/>
+                            <input name="password" type="password" class="form-control form-default"
+                                   placeholder="Password"/>
+                            <div th:if="${param.q}" class="text-danger">Nope. Try again.</div>
+
+                            <button class="btn btn-lg btn-block btn-primary" type="submit">Sing In</button>
+                        </div>
+                    </div>
                 </form>
             </div>
-            <th:block th:if="${listProductsToParse} != null">
-                <div class="col-lg-12 mx-auto">
-                    <p>success=)</p>
-                </div>
-            </th:block>
         </div>
     </div>
 </header>
@@ -45,6 +48,5 @@
         crossorigin="anonymous"></script>
 
 </body>
+
 </html>
-
-

@@ -23,7 +23,6 @@ public class RootController {
 
     @RequestMapping("/")
     public String index() {
-
         return "index";
     }
 
@@ -46,5 +45,10 @@ public class RootController {
         model.addAttribute("listProductsToParse", listProductsToParse);
 
         return "index";
+    }
+
+    @RequestMapping("/login")
+    public String login(){
+        return "login";
     }
 }
