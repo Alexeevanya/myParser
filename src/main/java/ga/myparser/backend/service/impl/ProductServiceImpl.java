@@ -79,6 +79,7 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         if(listCatalogToParse.isEmpty()){
+            log.info("Subcategories not found on page");
         }
         return listCategoryToParse;
     }
@@ -104,24 +105,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<String> parseProducts(List<String> listProductsToParse) {
+        List<String> listUpdatedOptions = new ArrayList<>();
         List<Integer> listNewProductsToParse = new ArrayList<>(); //todo add parse new products
-
         for (String productURL : listProductsToParse) {
 
             int frProductId = parsProduct.getProductIdFromUrl(productURL);
             List<Integer> listMyProductId = productDAO.getMyIdByFrId(frProductId);
-            if(listMyProductId.isEmpty()){
+            if (listMyProductId.isEmpty()) {
                 listNewProductsToParse.add(frProductId);
             } else {
-                List<String> listUpdatedOptions = updateProductOptions(productURL, listMyProductId);
-                return listUpdatedOptions;
+                String updatedUrl = updateProductOptions(productURL, listMyProductId);
+                if(updatedUrl != null){
+                    listUpdatedOptions.add(updatedUrl);
+                }
             }
         }
-        return Collections.EMPTY_LIST;
+        return listUpdatedOptions;
     }
 
-    private List<String> updateProductOptions(String productURL, List<Integer> listMyProductIdToUpdate){
-        List<String> listUpdatedOptions = new ArrayList<>();
+    private String updateProductOptions(String productURL, List<Integer> listMyProductIdToUpdate){
         Document doc = null;
         try {
             doc = Jsoup.connect(productURL).get();
@@ -129,9 +131,7 @@ public class ProductServiceImpl implements ProductService {
             log.warn("Can't connect to product url - {}", productURL);
         }
         Set<Integer> listOptions = parsProduct.getOptions(doc);
-        if (listOptions.isEmpty()) {
-
-        } else {
+        if (!listOptions.isEmpty()) {
             Set<Integer> listOptionsValuesIds = convertOptionsValuesToIds(listOptions);
             if (listOptionsValuesIds != null) {
                 for (Integer productId : listMyProductIdToUpdate) {
@@ -144,15 +144,10 @@ public class ProductServiceImpl implements ProductService {
                         log.info("Updated in product id {}", productId);
                     }
                 }
-                listUpdatedOptions.add(productURL);
+                return productURL;
             }
         }
-        if(listUpdatedOptions.isEmpty()){
-            return Collections.emptyList();
-        } else {
-            return listUpdatedOptions;
-        }
-
+        return null;
     }
 
     private Set<Integer> convertOptionsValuesToIds(Set<Integer> listOptions) {
