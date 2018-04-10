@@ -8,7 +8,7 @@ public interface ProductDAO {
 
     void deleteOldOptions(int productId, int optionId);
 
-    int getProductOptionId(Integer productId);
+    int getProductOptionId(Integer productId, int optionId);
 
     void updateOptions(int productId, int productOptionId, int optionId, int optionValueId);
 

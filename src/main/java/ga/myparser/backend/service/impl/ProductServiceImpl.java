@@ -108,7 +108,6 @@ public class ProductServiceImpl implements ProductService {
         List<String> listUpdatedOptions = new ArrayList<>();
         List<Integer> listNewProductsToParse = new ArrayList<>(); //todo add parse new products
         for (String productURL : listProductsToParse) {
-
             int frProductId = parsProduct.getProductIdFromUrl(productURL);
             List<Integer> listMyProductId = productDAO.getMyIdByFrId(frProductId);
             if (listMyProductId.isEmpty()) {
@@ -141,11 +140,11 @@ public class ProductServiceImpl implements ProductService {
                 for (Integer productId : listMyProductIdToUpdate) {
                     int optionId = 13;
                     productDAO.deleteOldOptions(productId, optionId);
-                    int productOptionId = productDAO.getProductOptionId(productId);
+                    int productOptionId = productDAO.getProductOptionId(productId, optionId);
 
                     for (Integer optionValueId : listOptionsValuesIds) {
                         productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
-                        log.info("Updated in product id {}", productId);
+//                        log.info("Updated in product id {}", productId);
                     }
                 }
                 return productURL;

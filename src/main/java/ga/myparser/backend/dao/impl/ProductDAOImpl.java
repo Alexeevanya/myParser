@@ -39,9 +39,10 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
-    public int getProductOptionId(Integer productId) {
-        Query query = em.createQuery("select p.productOptionId from ProductOption p where p.productId= :productId");
-        query.setParameter("productId", productId);
+    public int getProductOptionId(Integer productId, int optionId) {
+        Query query = em.createQuery("select p.productOptionId from ProductOption p where p.productId= :productId and p.optionId= :optionId");
+        query.setParameter("productId", productId)
+                .setParameter("optionId", optionId);
         return (int) query.getSingleResult();
     }
 
