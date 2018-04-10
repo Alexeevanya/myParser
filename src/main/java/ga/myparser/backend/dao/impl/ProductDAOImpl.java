@@ -56,4 +56,13 @@ public class ProductDAOImpl implements ProductDAO {
                 .setParameter(4, optionValueId);
         query.executeUpdate();
     }
+
+    @Override
+    @Transactional
+    public void nullifyAvailability(Integer productId) {
+        Query query = em.createNativeQuery("UPDATE oc_product SET quantity = ? WHERE product_id = ?")
+                .setParameter(1, 0)
+                .setParameter(2, productId);
+        query.executeUpdate();
+    }
 }

@@ -131,7 +131,11 @@ public class ProductServiceImpl implements ProductService {
             log.warn("Can't connect to product url - {}", productURL);
         }
         Set<Integer> listOptions = parsProduct.getOptions(doc);
-        if (!listOptions.isEmpty()) {
+        if (listOptions.isEmpty()) {
+            for (Integer productId : listMyProductIdToUpdate) {
+                productDAO.nullifyAvailability(productId);
+            }
+        } else {
             Set<Integer> listOptionsValuesIds = convertOptionsValuesToIds(listOptions);
             if (listOptionsValuesIds != null) {
                 for (Integer productId : listMyProductIdToUpdate) {

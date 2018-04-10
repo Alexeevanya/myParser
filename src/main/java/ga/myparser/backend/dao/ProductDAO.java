@@ -11,4 +11,6 @@ public interface ProductDAO {
     int getProductOptionId(Integer productId);
 
     void updateOptions(int productId, int productOptionId, int optionId, int optionValueId);
+
+    void nullifyAvailability(Integer productId);
 }
