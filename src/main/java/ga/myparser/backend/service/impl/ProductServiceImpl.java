@@ -79,7 +79,6 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         if(listCatalogToParse.isEmpty()){
-            System.out.println("123123123123");
         }
         return listCategoryToParse;
     }
@@ -105,43 +104,55 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<String> parseProducts(List<String> listProductsToParse) {
-        List<String> updatedOptionsList = new ArrayList<>();
+        List<Integer> listNewProductsToParse = new ArrayList<>(); //todo add parse new products
+
         for (String productURL : listProductsToParse) {
 
             int frProductId = parsProduct.getProductIdFromUrl(productURL);
             List<Integer> listMyProductId = productDAO.getMyIdByFrId(frProductId);
-
-            if(!listMyProductId.isEmpty()){
-                Document doc = null;
-                try {
-                    doc = Jsoup.connect(productURL).get();
-                } catch (IOException e) {
-                    log.warn("Can't connect to product url - {}", productURL);
-                }
-                Set<Integer> listOptions = parsProduct.getOptions(doc);
-                if (!listOptions.isEmpty()) {
-                    Set<Integer> listOptionsValuesIds = convertOptionsValuesToIds(listOptions);
-                    if (listOptionsValuesIds != null) {
-                        for (Integer productId : listMyProductId) {
-                            int optionId = 13;
-                            productDAO.deleteOldOptions(productId, optionId);
-                            int productOptionId = productDAO.getProductOptionId(productId);
-
-                            for (Integer optionValueId : listOptionsValuesIds) {
-                                productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
-                                log.info("Updated in product id {}", productId);
-                            }
-                        }
-                        updatedOptionsList.add(productURL);
-                    }
-                }
+            if(listMyProductId.isEmpty()){
+                listNewProductsToParse.add(frProductId);
+            } else {
+                List<String> listUpdatedOptions = updateProductOptions(productURL, listMyProductId);
+                return listUpdatedOptions;
             }
         }
-        if(updatedOptionsList.isEmpty()){
+        return Collections.EMPTY_LIST;
+    }
+
+    private List<String> updateProductOptions(String productURL, List<Integer> listMyProductIdToUpdate){
+        List<String> listUpdatedOptions = new ArrayList<>();
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(productURL).get();
+        } catch (IOException e) {
+            log.warn("Can't connect to product url - {}", productURL);
+        }
+        Set<Integer> listOptions = parsProduct.getOptions(doc);
+        if (listOptions.isEmpty()) {
+
+        } else {
+            Set<Integer> listOptionsValuesIds = convertOptionsValuesToIds(listOptions);
+            if (listOptionsValuesIds != null) {
+                for (Integer productId : listMyProductIdToUpdate) {
+                    int optionId = 13;
+                    productDAO.deleteOldOptions(productId, optionId);
+                    int productOptionId = productDAO.getProductOptionId(productId);
+
+                    for (Integer optionValueId : listOptionsValuesIds) {
+                        productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
+                        log.info("Updated in product id {}", productId);
+                    }
+                }
+                listUpdatedOptions.add(productURL);
+            }
+        }
+        if(listUpdatedOptions.isEmpty()){
             return Collections.emptyList();
         } else {
-            return updatedOptionsList;
+            return listUpdatedOptions;
         }
+
     }
 
     private Set<Integer> convertOptionsValuesToIds(Set<Integer> listOptions) {
