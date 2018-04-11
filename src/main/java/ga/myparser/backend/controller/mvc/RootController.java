@@ -31,9 +31,9 @@ public class RootController {
 
         parsProduct.setDollarRate(dollarRate);
 
-        List<String> listUpdatedProducts = productService.startParseCatalog(catalogURL);
+        productService.startParseCatalog(catalogURL);
 
-        model.addAttribute("listUpdatedProducts", listUpdatedProducts);
+//        model.addAttribute("listUpdatedProducts", listUpdatedProducts);
 
         return "index";
     }

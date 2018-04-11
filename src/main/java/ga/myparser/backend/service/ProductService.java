@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<String> startParseCatalog(String catalogURL);
+    void startParseCatalog(String catalogURL);
 
     List<String> getListCatalogToParse(Document listCatalog);
 
@@ -14,6 +14,6 @@ public interface ProductService {
 
     List<String> getListProductsToParse(List<String> listCategoryToParse);
 
-    List<String> parseProducts(List<String> listProductsToParse);
+    void parseProducts(List<String> listProductsToParse);
 
 }

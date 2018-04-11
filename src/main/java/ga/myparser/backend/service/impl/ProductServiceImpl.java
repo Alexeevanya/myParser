@@ -25,7 +25,7 @@ public class ProductServiceImpl implements ProductService {
     private final ParsProduct parsProduct;
 
     @Override
-    public List<String> startParseCatalog(String catalogURL) {
+    public void startParseCatalog(String catalogURL) {
         if(!Utils.urlIsValid(catalogURL)){
             throw new URLNotValidException(catalogURL);
         }
@@ -43,13 +43,8 @@ public class ProductServiceImpl implements ProductService {
 
         List<String> listProductsToParse = getListProductsToParse(listCategoryToParse);
 
-        List<String> successList = parseProducts(listProductsToParse);
+        parseProducts(listProductsToParse);
 
-        if(successList.isEmpty()){
-            successList = new ArrayList<>();
-            successList.add("There are no matching items to update options");
-        }
-        return successList;
     }
 
     @Override
@@ -61,13 +56,7 @@ public class ProductServiceImpl implements ProductService {
         }
         if(catalogUrls.isEmpty()){
             catalogUrls.add(listCatalog.location());
-            for (String catalogUrl : catalogUrls) {
-                System.out.println(catalogUrl);
-            }
             return catalogUrls;
-        }
-        for (String catalogUrl : catalogUrls) {
-            System.out.println(catalogUrl);
         }
         return catalogUrls;
     }
@@ -114,8 +103,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<String> parseProducts(List<String> listProductsToParse) {
-        List<String> listUpdatedOptions = new ArrayList<>();
+    public void parseProducts(List<String> listProductsToParse) {
         List<Integer> listNewProductsToParse = new ArrayList<>(); //todo add parse new products
         for (String productURL : listProductsToParse) {
             int frProductId = parsProduct.getProductIdFromUrl(productURL);
@@ -123,16 +111,12 @@ public class ProductServiceImpl implements ProductService {
             if (listMyProductId.isEmpty()) {
                 listNewProductsToParse.add(frProductId);
             } else {
-                String updatedUrl = updateProductOptions(productURL, listMyProductId);
-                if(updatedUrl != null){
-                    listUpdatedOptions.add(updatedUrl);
-                }
+                updateProductOptions(productURL, listMyProductId);
             }
         }
-        return listUpdatedOptions;
     }
 
-    private String updateProductOptions(String productURL, List<Integer> listMyProductIdToUpdate){
+    private void updateProductOptions(String productURL, List<Integer> listMyProductIdToUpdate){
         Document doc = null;
         try {
             doc = Jsoup.connect(productURL).get();
@@ -154,13 +138,10 @@ public class ProductServiceImpl implements ProductService {
 
                     for (Integer optionValueId : listOptionsValuesIds) {
                         productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
-//                        log.info("Updated in product id {}", productId);
                     }
                 }
-                return productURL;
             }
         }
-        return null;
     }
 
     private Set<Integer> convertOptionsValuesToIds(Set<Integer> listOptions) {
