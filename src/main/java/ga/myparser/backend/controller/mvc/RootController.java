@@ -33,8 +33,6 @@ public class RootController {
 
         productService.startParseCatalog(catalogURL);
 
-//        model.addAttribute("listUpdatedProducts", listUpdatedProducts);
-
         return "index";
     }
 

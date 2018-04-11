@@ -11,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,6 +24,16 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductDAO productDAO;
     private final ParsProduct parsProduct;
+
+    @Scheduled(initialDelay = 5000, fixedDelay = 4320 * 10000)
+    private void scheduleStart() throws InterruptedException {
+        log.info("Parser started");
+        List<String> listUrlsToParse = Utils.getListUrlsToParse();
+        for (String url : listUrlsToParse) {
+            startParseCatalog(url);
+            Thread.sleep(60_000);
+        }
+    }
 
     @Override
     public void startParseCatalog(String catalogURL) {
