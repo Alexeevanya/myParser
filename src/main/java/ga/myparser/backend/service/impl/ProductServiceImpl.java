@@ -55,9 +55,19 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<String> getListCatalogToParse(Document listCatalog) {
         List<String> catalogUrls = new ArrayList<>();
-        Elements elements = listCatalog.select("div.item");
-        for (Element element : elements.select("div.img").select("a")) {
+        Elements elements = listCatalog.select("div.item").select("h2");
+        for (Element element : elements.select("a")) {
             catalogUrls.add("http://free-run.kiev.ua/" + element.attr("href"));
+        }
+        if(catalogUrls.isEmpty()){
+            catalogUrls.add(listCatalog.location());
+            for (String catalogUrl : catalogUrls) {
+                System.out.println(catalogUrl);
+            }
+            return catalogUrls;
+        }
+        for (String catalogUrl : catalogUrls) {
+            System.out.println(catalogUrl);
         }
         return catalogUrls;
     }
