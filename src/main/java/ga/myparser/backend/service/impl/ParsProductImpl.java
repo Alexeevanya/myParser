@@ -70,7 +70,6 @@ public class ParsProductImpl implements ParsProduct {
             log.warn("NumberFormatException {}", doc.location());
         }
         if(listOptions.isEmpty()){
-            log.warn("Empty list options {}", doc.location());
             return Collections.EMPTY_SET;
         }
         return listOptions;

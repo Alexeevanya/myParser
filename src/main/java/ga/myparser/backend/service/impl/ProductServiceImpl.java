@@ -11,6 +11,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +27,11 @@ public class ProductServiceImpl implements ProductService {
     private final ParsProduct parsProduct;
 
     @Scheduled(initialDelay = 5000, fixedDelay = 4320 * 10000)
-    private void scheduleStart() throws InterruptedException {
+    private void scheduleStart() {
         log.info("Parser started");
         List<String> listUrlsToParse = Utils.getListUrlsToParse();
-        for (String url : listUrlsToParse) {
-            startParseCatalog(url);
-            Thread.sleep(60_000);
-        }
+        listUrlsToParse.forEach(this::startParseCatalog);
+        log.info("parser finished");
     }
 
     @Override
@@ -41,73 +40,66 @@ public class ProductServiceImpl implements ProductService {
             throw new URLNotValidException(catalogURL);
         }
 
-        Document catalogURLs = null;
         try {
-            catalogURLs = Jsoup.connect(catalogURL).get();
+            Document docCatalogURL = Jsoup.connect(catalogURL).get();
+
+            List<String> listCatalogToParse = getListCatalogToParse(docCatalogURL);
+
+            List<String> listCategoryToParse = getListCategoryToParse(listCatalogToParse);
+
+            List<String> listProductsToParse = getListProductsToParse(listCategoryToParse);
+
+            parseProducts(listProductsToParse);
         } catch (IOException e) {
             log.warn("Can't parse URL {}", catalogURL);
         }
-
-        List<String> listCatalogToParse = getListCatalogToParse(catalogURLs);
-
-        List<String> listCategoryToParse = getListCategoryToParse(listCatalogToParse);
-
-        List<String> listProductsToParse = getListProductsToParse(listCategoryToParse);
-
-        parseProducts(listProductsToParse);
-
     }
 
     @Override
     public List<String> getListCatalogToParse(Document listCatalog) {
-        List<String> catalogUrls = new ArrayList<>();
+        List<String> catalogURLs = new ArrayList<>();
         Elements elements = listCatalog.select("div.item").select("h2");
         for (Element element : elements.select("a")) {
-            catalogUrls.add("http://free-run.kiev.ua/" + element.attr("href"));
+            catalogURLs.add("http://free-run.kiev.ua/" + element.attr("href"));
         }
-        if(catalogUrls.isEmpty()){
-            catalogUrls.add(listCatalog.location());
-            return catalogUrls;
+        if(catalogURLs.isEmpty()){
+            catalogURLs.add(listCatalog.location());
+            return catalogURLs;
         }
-        return catalogUrls;
+        return catalogURLs;
     }
 
     @Override
     public List<String> getListCategoryToParse(List<String> listCatalogToParse) {
-        Document doc;
         List<String> listCategoryToParse = new ArrayList<>();
-        for (String catalogUrl : listCatalogToParse) {
+        for (String catalogURL : listCatalogToParse) {
             try {
-                doc = Jsoup.connect(catalogUrl).get();
+                Document doc = Jsoup.connect(catalogURL).get();
                 Elements elements = doc.select("div.oPager");
                 listCategoryToParse.add(doc.location());
                 for (Element element : elements.select("a")) {
                     listCategoryToParse.add("http://free-run.kiev.ua/" + element.attr("href"));
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("IOException when getListCategoryToParse - {}", catalogURL);
             }
-        }
-        if(listCatalogToParse.isEmpty()){
-            log.info("Subcategories not found on page");
         }
         return listCategoryToParse;
     }
 
     @Override
     public List<String> getListProductsToParse(List<String> listCategoryToParse) {
-        Document doc;
         List<String> listProductsToParse = new ArrayList<>();
 
         for(String cat : listCategoryToParse){
             try {
-                doc = Jsoup.connect(cat).get();
+                Document doc = Jsoup.connect(cat).get();
                 Elements elements = doc.select("div.items");
                 for (Element element : elements.select("a.button")) {
                     listProductsToParse.add("http://free-run.kiev.ua/" + element.attr("href"));
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("IOException when getListProductsToParse - {}", cat);
             }
         }
         return listProductsToParse;
@@ -128,30 +120,34 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void updateProductOptions(String productURL, List<Integer> listMyProductIdToUpdate){
-        Document doc = null;
-        try {
-            doc = Jsoup.connect(productURL).get();
-        } catch (IOException e) {
-            log.warn("Can't connect to product url - {}", productURL);
-        }
-        Set<Integer> listOptions = parsProduct.getOptions(doc);
-        if (listOptions.isEmpty()) {
-            for (Integer productId : listMyProductIdToUpdate) {
-                productDAO.nullifyAvailability(productId);
-            }
-        } else {
-            Set<Integer> listOptionsValuesIds = convertOptionsValuesToIds(listOptions);
-            if (listOptionsValuesIds != null) {
-                for (Integer productId : listMyProductIdToUpdate) {
-                    int optionId = 13;
-                    productDAO.deleteOldOptions(productId, optionId);
-                    int productOptionId = productDAO.getProductOptionId(productId, optionId);
 
-                    for (Integer optionValueId : listOptionsValuesIds) {
-                        productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
+        try {
+            Document doc = Jsoup.connect(productURL).get();
+            Set<Integer> listOptions = parsProduct.getOptions(doc);
+            if (listOptions.isEmpty()) {
+                for (Integer productId : listMyProductIdToUpdate) {
+                    productDAO.nullifyAvailability(productId);
+                }
+            } else {
+                Set<Integer> listOptionsValuesIds = convertOptionsValuesToIds(listOptions);
+                if (listOptionsValuesIds != null) {
+                    for (Integer productId : listMyProductIdToUpdate) {
+                        int optionId = 13;
+                        productDAO.deleteOldOptions(productId, optionId);
+                        try {
+                            int productOptionId = productDAO.getProductOptionId(productId, optionId);
+
+                            for (Integer optionValueId : listOptionsValuesIds) {
+                                productDAO.updateOptions(productId, productOptionId, optionId, optionValueId);
+                            }
+                        } catch (EmptyResultDataAccessException e) {
+                            log.error("EmptyResultDataAccessException - {}", productId);
+                        }
                     }
                 }
             }
+        } catch (IOException e) {
+            log.warn("Can't connect to product url - {}", productURL);
         }
     }
 
