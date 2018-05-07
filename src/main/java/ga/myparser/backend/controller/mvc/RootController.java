@@ -1,7 +1,7 @@
 package ga.myparser.backend.controller.mvc;
 
-import ga.myparser.backend.service.ParsProduct;
-import ga.myparser.backend.service.ProductService;
+import ga.myparser.backend.service.freeRun.ParsProduct;
+import ga.myparser.backend.service.freeRun.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -9,8 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Slf4j
 @Controller

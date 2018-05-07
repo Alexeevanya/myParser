@@ -1,9 +1,9 @@
-package ga.myparser.backend.service.impl;
+package ga.myparser.backend.service.freeRun.impl;
 
 import ga.myparser.backend.dao.ProductDAO;
 import ga.myparser.backend.exception.URLNotValidException;
-import ga.myparser.backend.service.ParsProduct;
-import ga.myparser.backend.service.ProductService;
+import ga.myparser.backend.service.freeRun.ParsProduct;
+import ga.myparser.backend.service.freeRun.ProductService;
 import ga.myparser.backend.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

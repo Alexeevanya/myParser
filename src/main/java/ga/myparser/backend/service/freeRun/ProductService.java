@@ -1,4 +1,4 @@
-package ga.myparser.backend.service;
+package ga.myparser.backend.service.freeRun;
 
 import org.jsoup.nodes.Document;
 
