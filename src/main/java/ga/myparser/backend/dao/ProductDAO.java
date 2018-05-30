@@ -1,16 +1,15 @@
 package ga.myparser.backend.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductDAO {
 
-    List<Integer> getMyIdByFrId(int frId);
+    List<String> getAllModelProductsPoolParty(int idManufacturer);
 
-    void deleteOldOptions(int productId, int optionId);
+    void updateProductsPoolParty(String model, int quantity, BigDecimal price);
 
-    int getProductOptionId(Integer productId, int optionId);
+    void updateQuantity(String productModel);
 
-    void updateOptions(int productId, int productOptionId, int optionId, int optionValueId);
-
-    void nullifyAvailability(Integer productId);
+    int getIdManufacturerByName(String name);
 }

@@ -1,23 +1,19 @@
 package ga.myparser.backend.controller.mvc;
 
-import ga.myparser.backend.service.freeRun.ParsProduct;
-import ga.myparser.backend.service.freeRun.ProductService;
+import ga.myparser.backend.service.poolparty.PoolPartyService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class RootController {
 
-    private final ProductService productService;
-
-    private final ParsProduct parsProduct;
+    @Autowired
+    PoolPartyService ps;
 
     @RequestMapping("/")
     public String index() {
@@ -25,12 +21,9 @@ public class RootController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String parseCategory(Model model, @RequestParam String catalogURL, @RequestParam Double dollarRate){
-
-        parsProduct.setDollarRate(dollarRate);
-
-        productService.startParseCatalog(catalogURL);
-
+    public String startUpdatePoolParty(Model model){
+        ps.start();
+        model.addAttribute("status", "Update completed");
         return "index";
     }
 

@@ -8,6 +8,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,12 +19,18 @@ public class ProductDAOImpl implements ProductDAO {
     private EntityManager em;
 
     @Override
-    public List<Integer> getMyIdByFrId(int frId) {
-        Query query = em.createQuery("select m.myProductId from MyProductIdToFreeRunId m where m.freRunProductId = :frId");
-        query.setParameter("frId", frId);
+    public int getIdManufacturerByName(String name) {
+        Query query = em.createNativeQuery("SELECT manufacturer_id FROM oc_manufacturer WHERE name = :name");
+        query.setParameter("name", name);
+        return (int) query.getSingleResult();
+    }
 
+    @Override
+    public List<String> getAllModelProductsPoolParty(int idManufacturer) {
+        Query query = em.createQuery("select p.sku from ProductPoolParty p where p.manufacturer_id= :idManufacturer");
+        query.setParameter("idManufacturer", idManufacturer);
         try {
-            return (List<Integer>) query.getResultList();
+            return (List<String>) query.getResultList();
         } catch (NoResultException e){
             return Collections.emptyList();
         }
@@ -31,39 +38,19 @@ public class ProductDAOImpl implements ProductDAO {
 
     @Override
     @Transactional
-    public void deleteOldOptions(int productId, int optionId) {
-        Query query = em.createQuery("delete from ProductOptionValue where productId= :productId and optionId= :optionId");
-        query.setParameter("productId", productId)
-                .setParameter("optionId", optionId)
-                .executeUpdate();
-    }
-
-    @Override
-    public int getProductOptionId(Integer productId, int optionId) {
-        Query query = em.createQuery("select p.productOptionId from ProductOption p where p.productId= :productId and p.optionId= :optionId");
-        query.setParameter("productId", productId)
-                .setParameter("optionId", optionId);
-        return (int) query.getSingleResult();
-    }
-
-    @Override
-    @Transactional
-    public void updateOptions(int productId, int productOptionId, int optionId, int optionValueId) {
-        Query query = em.createNativeQuery("INSERT INTO oc_product_option_value VALUES" +
-                "(DEFAULT,?,?,?,?,1000,1,0.0000,'+',0,'+',0.00000000,'+')")
-                .setParameter(1, productOptionId)
-                .setParameter(2, productId)
-                .setParameter(3, optionId)
-                .setParameter(4, optionValueId);
+    public void updateProductsPoolParty(String model, int quantity, BigDecimal price) {
+        Query query = em.createQuery("update ProductPoolParty p set p.quantity = :quantity, p.price = :price where p.sku = :model");
+        query.setParameter("quantity", quantity)
+                .setParameter("price", price)
+                .setParameter("model", model);
         query.executeUpdate();
     }
 
     @Override
     @Transactional
-    public void nullifyAvailability(Integer productId) {
-        Query query = em.createNativeQuery("UPDATE oc_product SET quantity = ? WHERE product_id = ?")
-                .setParameter(1, 0)
-                .setParameter(2, productId);
+    public void updateQuantity(String productModel) {
+        Query query = em.createQuery("update ProductPoolParty p set p.quantity = 0 where p.sku = :productModel");
+        query.setParameter("productModel", productModel);
         query.executeUpdate();
     }
 }
