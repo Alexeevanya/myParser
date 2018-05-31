@@ -104,12 +104,20 @@ public class PoolPartyServiceImpl implements PoolPartyService {
     }
 
     private List<String> getListToZeroQuantity(List<String> allProductsPoolParty, List<ProductPoolPartyToUpdate> listToUpdate) {
-        List<String> updatedProducts = new ArrayList<>();
-        for (ProductPoolPartyToUpdate product : listToUpdate) {
-            updatedProducts.add(product.model);
+        List<String> zeroQuantity = new ArrayList<>();
+        for (String entry : allProductsPoolParty) {
+            boolean found = false;
+            for (ProductPoolPartyToUpdate update : listToUpdate) {
+                if (update.model.equals(entry)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                zeroQuantity.add(entry);
+            }
         }
-        allProductsPoolParty.removeAll(updatedProducts);
-        return allProductsPoolParty;
+        return zeroQuantity;
     }
 
     private void updateQuantity(List<String> listToZeroQuantity) {
