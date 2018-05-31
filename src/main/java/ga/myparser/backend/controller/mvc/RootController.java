@@ -1,6 +1,6 @@
 package ga.myparser.backend.controller.mvc;
 
-import ga.myparser.backend.service.poolparty.PoolPartyService;
+import ga.myparser.backend.service.common.CommonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class RootController {
 
     @Autowired
-    PoolPartyService ps;
+    CommonService commonService;
 
     @RequestMapping("/")
     public String index() {
@@ -22,7 +22,7 @@ public class RootController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public String startUpdatePoolParty(Model model){
-        ps.start();
+        commonService.updateSneakersPoolParty();
         model.addAttribute("status", "Update completed");
         return "index";
     }
