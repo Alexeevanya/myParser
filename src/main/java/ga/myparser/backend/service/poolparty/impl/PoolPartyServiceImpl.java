@@ -30,7 +30,7 @@ public class PoolPartyServiceImpl implements PoolPartyService {
 
 
     public void start(){
-        int idManufacturerPoolParty = productDAO.getIdManufacturerByName("PoolParty");
+        int idManufacturerPoolParty = productDAO.getIdManufacturerByName("Pool Party");
 
         List<String> allProductsPoolParty = productDAO.getAllModelProductsPoolParty(idManufacturerPoolParty);
 
