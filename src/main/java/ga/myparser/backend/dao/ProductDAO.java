@@ -12,4 +12,6 @@ public interface ProductDAO {
     void updateQuantity(String productModel);
 
     int getIdManufacturerByName(String name);
+
+    List<Integer> getProductsByUpc();
 }

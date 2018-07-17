@@ -53,4 +53,15 @@ public class ProductDAOImpl implements ProductDAO {
         query.setParameter("productModel", productModel);
         query.executeUpdate();
     }
+
+    @Override
+    public List<Integer> getProductsByUpc() {
+        Query query = em.createQuery("select p.sku from ProductFreeRun p where p.upc= :upc");
+        query.setParameter("upc", 1);
+        try {
+            return (List<Integer>) query.getResultList();
+        } catch (NoResultException e){
+            return Collections.emptyList();
+        }
+    }
 }
