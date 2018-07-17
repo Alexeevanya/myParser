@@ -3,6 +3,7 @@ package ga.myparser.backend.service.common.impl;
 import ga.myparser.backend.service.common.CommonService;
 import ga.myparser.backend.service.common.ProductFreeRunToUpdate;
 import ga.myparser.backend.service.common.ProductPoolPartyToUpdate;
+import ga.myparser.backend.service.freeRun.FreeRunService;
 import ga.myparser.backend.service.poolparty.PoolPartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,17 @@ public class CommonServiceImpl implements CommonService {
     @Autowired
     private PoolPartyService poolPartyService;
 
+    @Autowired
+    private FreeRunService freeRunService;
+
     @Override
     public void updateSneakersPoolParty() {
         poolPartyService.start();
+    }
+
+    @Override
+    public void updateSneakersFreeRun() {
+        freeRunService.start();
     }
 
     @Override

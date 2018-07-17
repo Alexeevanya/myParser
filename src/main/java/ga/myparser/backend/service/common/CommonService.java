@@ -6,4 +6,5 @@ public interface CommonService {
     List<ProductPoolPartyToUpdate> getProductsToUpdatePoolParty();
     void updateSneakersPoolParty();
     List<ProductFreeRunToUpdate> getProductsToUpdateFreeRun();
+    void updateSneakersFreeRun();
 }
