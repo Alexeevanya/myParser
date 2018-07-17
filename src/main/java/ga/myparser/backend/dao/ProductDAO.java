@@ -13,5 +13,5 @@ public interface ProductDAO {
 
     int getIdManufacturerByName(String name);
 
-    List<Integer> getProductsByUpc();
+    void updateProductsFreeRun(String model, int quantity, BigDecimal price);
 }
