@@ -17,12 +17,21 @@
                <hr>
             </div>
             <div class="form-group col-lg-7 mx-auto text-primary">
-                <form action="/" method="POST">
+                <form action="/PoolParty/" method="POST">
                     <div class="form-group row">
                         <label class="col-sm-12 col-form-label">PoolParty</label>
                         <div class="col-sm-12 text-center">
                             <button class="btn btn-xs btn-primary col-sm-3" type="submit">Start</button>
-                            <p th:text="${status}">Update completed</p>
+                            <p th:text="${statusPP}">Update completed</p>
+                        </div>
+                    </div>
+                </form>
+                <form action="/FreeRun/" method="POST">
+                    <div class="form-group row">
+                        <label class="col-sm-12 col-form-label">FreeRun</label>
+                        <div class="col-sm-12 text-center">
+                            <button class="btn btn-xs btn-primary col-sm-3" type="submit">Start</button>
+                            <p th:text="${statusFR}">Update completed</p>
                         </div>
                     </div>
                 </form>
