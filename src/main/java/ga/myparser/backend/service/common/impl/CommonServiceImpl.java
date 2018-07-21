@@ -89,7 +89,6 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public List<ProductFreeRunToUpdate> getProductsToUpdateFreeRun() {
         List<ProductFreeRunToUpdate> productFreeRunToUpdates = new ArrayList<>();
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
         try (InputStream xml = new URL("https://sneakers.net.ua/freeRun.xml").openStream()) {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -107,16 +106,11 @@ public class CommonServiceImpl implements CommonService {
                     NodeList nodeList = node.getChildNodes();
                     int n = nodeList.getLength();
                     Node current;
-
+                    product.setModel(element.getAttribute("id"));
                     for (int j = 0; j < n; j++) {
                         current = nodeList.item(j);
                         if (current.getNodeType() == Node.ELEMENT_NODE) {
-
                             switch (current.getNodeName()) {
-                                case "url": {
-                                    product.setModel(element.getAttribute("id"));
-                                }
-                                break;
                                 case "price": {
                                     BigDecimal price = getPrice(current.getTextContent());
                                     product.setPrice(price);
