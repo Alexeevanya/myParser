@@ -38,6 +38,7 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
+    @Transactional
     public void updateList(List<ProductFreeRun> list) {
         list.forEach(p -> em.merge(p));
     }

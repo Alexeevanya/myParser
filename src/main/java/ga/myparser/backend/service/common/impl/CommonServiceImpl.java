@@ -88,6 +88,8 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public List<ProductFreeRunToUpdate> getProductsToUpdateFreeRun() {
         List<ProductFreeRunToUpdate> productFreeRunToUpdates = new ArrayList<>();
+        int categoryIdDefect = 200;
+        int categoryIdDefectSold = 265;
 
         try (InputStream xml = new URL("https://sneakers.net.ua/freeRun.xml").openStream()) {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -104,22 +106,38 @@ public class CommonServiceImpl implements CommonService {
                     NodeList listChildOffer = offer.getChildNodes();
                     Node current;
                     Element offerElement = (Element) offer;
+                    product.setModel(offerElement.getAttribute("id"));
 
                     for (int j = 0; j < listChildOffer.getLength(); j++) {
                         current = listChildOffer.item(j);
                         if (current.getNodeType() == Node.ELEMENT_NODE) {
                             switch (current.getNodeName()) {
+                                case "categoryId": {
+                                    int categoryId = Integer.valueOf(current.getTextContent());
+                                    product.setCategory(categoryId);
+                                }
+                                break;
                                 case "price": {
                                     BigDecimal price = getPrice(current.getTextContent());
                                     product.setPrice(price);
                                 }
                                 break;
+                                case "param": {
+                                    String textOptions = current.getTextContent();
+                                    product.setOptions(convertOptionsToList(textOptions));
+                                }
+                                break;
                             }
                         }
                     }
-                    product.setModel(offerElement.getAttribute("id"));
-                    product.setQuantity(1000);
-                    productFreeRunToUpdates.add(product);
+                    if(product.getOptions() == null){
+                        product.setOptions(Collections.EMPTY_SET);
+                    }
+                    if(product.getCategory() != categoryIdDefect &&
+                            product.getCategory() != categoryIdDefectSold){
+                        product.setQuantity(1000);
+                        productFreeRunToUpdates.add(product);
+                    }
                 }
             }
         } catch (ParserConfigurationException | IOException | SAXException e) {
@@ -128,8 +146,21 @@ public class CommonServiceImpl implements CommonService {
         return productFreeRunToUpdates;
     }
 
-    private BigDecimal getPrice(String textContent) {
-        double value = Double.valueOf(textContent);
+    public Set<Integer> convertOptionsToList(String textOptions) {
+        Set<Integer> options = new LinkedHashSet<>();
+        try {
+            for (String option : textOptions.split(",")) {
+                Integer optionValue = (int) Double.parseDouble(option);
+                options.add(optionValue);
+            }
+        } catch (NumberFormatException e) {
+            return Collections.EMPTY_SET;
+        }
+        return options;
+    }
+
+    private BigDecimal getPrice(String price) {
+        double value = Double.valueOf(price);
         value = value * 26.5 + 250;
         int intPrice = (int) value;
         return new BigDecimal(intPrice);
