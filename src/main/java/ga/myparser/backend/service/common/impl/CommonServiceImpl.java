@@ -55,13 +55,12 @@ public class CommonServiceImpl implements CommonService {
             for (int i = 0; i < offersNodeList.getLength(); i++) {
                 if (offersNodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
                     ProductPoolPartyToUpdate product = new ProductPoolPartyToUpdate();
-                    Node node = doc.getElementsByTagName("offer").item(i);
-                    NodeList nodeList = node.getChildNodes();
-                    int n = nodeList.getLength();
+                    Node offer = doc.getElementsByTagName("offer").item(i);
+                    NodeList listChildOffer = offer.getChildNodes();
                     Node current;
 
-                    for (int j = 0; j < n; j++) {
-                        current = nodeList.item(j);
+                    for (int j = 0; j < listChildOffer.getLength(); j++) {
+                        current = listChildOffer.item(j);
                         if (current.getNodeType() == Node.ELEMENT_NODE) {
                             switch (current.getNodeName()) {
                                 case "model": {
@@ -101,23 +100,24 @@ public class CommonServiceImpl implements CommonService {
                 if (offersNodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
                     ProductFreeRunToUpdate product = new ProductFreeRunToUpdate();
 
-                    Node node = doc.getElementsByTagName("offer").item(i);
-                    Element element = (Element) node;
-                    NodeList nodeList = node.getChildNodes();
-                    int n = nodeList.getLength();
+                    Node offer = doc.getElementsByTagName("offer").item(i);
+                    NodeList listChildOffer = offer.getChildNodes();
                     Node current;
-                    product.setModel(element.getAttribute("id"));
-                    for (int j = 0; j < n; j++) {
-                        current = nodeList.item(j);
+                    Element offerElement = (Element) offer;
+
+                    for (int j = 0; j < listChildOffer.getLength(); j++) {
+                        current = listChildOffer.item(j);
                         if (current.getNodeType() == Node.ELEMENT_NODE) {
                             switch (current.getNodeName()) {
                                 case "price": {
                                     BigDecimal price = getPrice(current.getTextContent());
                                     product.setPrice(price);
                                 }
+                                break;
                             }
                         }
                     }
+                    product.setModel(offerElement.getAttribute("id"));
                     product.setQuantity(1000);
                     productFreeRunToUpdates.add(product);
                 }
