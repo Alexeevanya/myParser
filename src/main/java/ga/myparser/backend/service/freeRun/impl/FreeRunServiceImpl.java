@@ -23,12 +23,14 @@ public class FreeRunServiceImpl implements FreeRunService {
     @Override
     public void start() {
 
-        List<ProductFreeRunToUpdate> listFreeRunProductsToUpdate = commonService.getProductsToUpdateFreeRun();
+        List<ProductFreeRunToUpdate> listFreeRunProducts = commonService.getProductsToUpdateFreeRun();
 
-        updateProducts(listFreeRunProductsToUpdate);
+        List<ProductFreeRun> listToUpdate = getListToUpdate(listFreeRunProducts);
+
+        productDAO.updateList(listToUpdate);
     }
 
-    private void updateProducts(List<ProductFreeRunToUpdate> updates) {
+    private List<ProductFreeRun> getListToUpdate(List<ProductFreeRunToUpdate> updates) {
         List<ProductFreeRun> listToUpdate = new ArrayList<>();
         for (ProductFreeRunToUpdate update : updates) {
             ProductFreeRun product = productDAO.findByModel(update.getModel());
@@ -38,6 +40,6 @@ public class FreeRunServiceImpl implements FreeRunService {
                 listToUpdate.add(product);
             }
         }
-        productDAO.updateList(listToUpdate);
+        return listToUpdate;
     }
 }
