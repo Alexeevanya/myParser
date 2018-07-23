@@ -71,4 +71,11 @@ public class ProductDAOImpl implements ProductDAO {
         query.setParameter("productModel", productModel);
         query.executeUpdate();
     }
+
+    @Override
+    public int getOptionIdByName(String optionName) {
+        Query query = em.createQuery("select p.optionId from OptionDescriptionFR p where p.name= :optionName").
+                setParameter("optionName", optionName);
+        return (int) query.getSingleResult();
+    }
 }

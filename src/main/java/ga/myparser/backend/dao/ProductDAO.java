@@ -18,4 +18,6 @@ public interface ProductDAO {
     int getIdManufacturerByName(String name);
 
     void updateList(List<ProductFreeRun> list);
+
+    int getOptionIdByName(String optionName);
 }
