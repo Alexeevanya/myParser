@@ -91,8 +91,10 @@ public class CommonServiceImpl implements CommonService {
         int categoryIdDefect = 200;
         int categoryIdDefectSold = 265;
 
-        try (InputStream xml = new URL("https://sneakers.net.ua/freeRun.xml").openStream()) {
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        try (InputStream xml = new URL("http://free-run.kiev.ua/yml/12345").openStream()) {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(xml);
             doc.getDocumentElement().normalize();
 
