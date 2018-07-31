@@ -78,4 +78,16 @@ public class ProductDAOImpl implements ProductDAO {
                 setParameter("optionName", optionName);
         return (int) query.getSingleResult();
     }
+
+    @Override
+    public List<ProductFreeRun> getProductsWithOptionsById(int productId) {
+        Query query = em.createQuery("select p from ProductFreeRun p " +
+                "left join fetch p.options where p.id = :productId").
+                setParameter("productId", productId);
+        try {
+            return (List<ProductFreeRun>) query.getResultList();
+        } catch (NoResultException e) {
+            return Collections.emptyList();
+        }
+    }
 }

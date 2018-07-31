@@ -67,4 +67,8 @@ public class ProductOptionValueFR {
     @Column(name = "weight_prefix")
     private String weightPrefix = "+";
 
+    @ManyToOne
+    @JoinColumn(name="product_id", insertable = false, updatable = false)
+    private ProductFreeRun productFreeRun;
+
 }

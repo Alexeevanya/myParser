@@ -20,4 +20,6 @@ public interface ProductDAO {
     void updateList(List<ProductFreeRun> list);
 
     int getOptionIdByName(String optionName);
+
+    List<ProductFreeRun> getProductsWithOptionsById(int productId);
 }
