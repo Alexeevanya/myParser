@@ -4,13 +4,16 @@ import ga.myparser.backend.dao.ProductDAO;
 import ga.myparser.backend.service.common.CommonService;
 import ga.myparser.backend.service.common.ProductFreeRunToUpdate;
 import ga.myparser.backend.service.freeRun.FreeRunService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 @Service
+@Slf4j
 public class FreeRunServiceImpl implements FreeRunService {
 
     @Autowired
@@ -18,6 +21,13 @@ public class FreeRunServiceImpl implements FreeRunService {
 
     @Autowired
     CommonService commonService;
+
+    @Scheduled(initialDelay = 100000, fixedDelay = 4320 * 10000)
+    private void scheduleStart() {
+        log.info("Update FreeRun Service started");
+        start();
+        log.info("Update FreeRun Service finished");
+    }
 
     @Override
     public void start() {
