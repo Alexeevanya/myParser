@@ -1,13 +1,11 @@
 package ga.myparser.backend.dao;
 
-import ga.myparser.backend.domain.ProductFreeRun;
-
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductDAO {
 
-    ProductFreeRun findByModel(String model);
+    int getIdBySku(String sku);
 
     List<String> getAllModelProductsPoolParty(int idManufacturer);
 
@@ -17,9 +15,13 @@ public interface ProductDAO {
 
     int getIdManufacturerByName(String name);
 
-    void updateList(List<ProductFreeRun> list);
+    void deleteOldOptions(int id, int optionNameId);
 
-    int getOptionIdByName(String optionName);
+    void updatePriceAndQuantity(int productId, BigDecimal price, int quantity);
 
-    List<ProductFreeRun> getProductsWithOptionsById(int productId);
+    void updateOption(int productId, int productOptionId, int optionId, int i);
+
+    int getProductOptionId(int productId, int optionId);
+
+    boolean findProductByOptionNameId(int commonOptionName, int productId);
 }

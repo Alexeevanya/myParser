@@ -108,7 +108,7 @@ public class CommonServiceImpl implements CommonService {
                     NodeList listChildOffer = offer.getChildNodes();
                     Node current;
                     Element offerElement = (Element) offer;
-                    product.setModel(offerElement.getAttribute("id"));
+                    product.setSku(offerElement.getAttribute("id"));
 
                     for (int j = 0; j < listChildOffer.getLength(); j++) {
                         current = listChildOffer.item(j);
@@ -132,12 +132,9 @@ public class CommonServiceImpl implements CommonService {
                             }
                         }
                     }
-                    if(product.getOptions() == null){
-                        product.setOptions(Collections.EMPTY_SET);
-                    }
                     if(product.getCategory() != categoryIdDefect &&
                             product.getCategory() != categoryIdDefectSold){
-                        product.setQuantity(1000);
+                        product.setQuantity(1001);
                         productFreeRunToUpdates.add(product);
                     }
                 }

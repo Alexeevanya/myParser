@@ -1,7 +1,6 @@
 package ga.myparser.backend.dao.impl;
 
 import ga.myparser.backend.dao.ProductDAO;
-import ga.myparser.backend.domain.ProductFreeRun;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -20,13 +19,13 @@ public class ProductDAOImpl implements ProductDAO {
     private EntityManager em;
 
     @Override
-    public ProductFreeRun findByModel(String model) {
+    public int getIdBySku(String sku) {
         try {
-            return (ProductFreeRun) em.createQuery("select p from ProductFreeRun p where p.sku = :model")
-                    .setParameter("model", model)
+            return (int) em.createQuery("select p.id from ProductFreeRun p where p.sku = :sku")
+                    .setParameter("sku", sku)
                     .getSingleResult();
         } catch (NoResultException e){
-            return null;
+            return 0;
         }
     }
 
@@ -35,12 +34,6 @@ public class ProductDAOImpl implements ProductDAO {
         Query query = em.createNativeQuery("SELECT manufacturer_id FROM oc_manufacturer WHERE name = :name");
         query.setParameter("name", name);
         return (int) query.getSingleResult();
-    }
-
-    @Override
-    @Transactional
-    public void updateList(List<ProductFreeRun> list) {
-        list.forEach(p -> em.merge(p));
     }
 
     @Override
@@ -73,21 +66,54 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
-    public int getOptionIdByName(String optionName) {
-        Query query = em.createQuery("select p.optionId from OptionDescriptionFR p where p.name= :optionName").
-                setParameter("optionName", optionName);
-        return (int) query.getSingleResult();
+    @Transactional
+    public void deleteOldOptions(int id, int optionNameId) {
+        em.createQuery("delete from ProductOptionValueFR p where p.productId= :id and p.optionId= :optionNameId").
+                setParameter("id", id).
+                setParameter("optionNameId", optionNameId).
+                executeUpdate();
     }
 
     @Override
-    public List<ProductFreeRun> getProductsWithOptionsById(int productId) {
-        Query query = em.createQuery("select p from ProductFreeRun p " +
-                "left join fetch p.options where p.id = :productId").
-                setParameter("productId", productId);
+    @Transactional
+    public void updatePriceAndQuantity(int productId, BigDecimal price, int quantity) {
+        em.createQuery("update ProductFreeRun p set p.price= ?1, p.quantity= ?2 where p.id= ?3").
+                setParameter(1, price).
+                setParameter(2, quantity).
+                setParameter(3, productId).
+                executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void updateOption(int productId, int productOptionId, int optionId, int optionValueId) {
+        Query query = em.createNativeQuery("INSERT INTO oc_product_option_value VALUES" +
+                "(DEFAULT,?,?,?,?,1000,1,0.0000,'+',0,'+',0.00000000,'+')")
+                .setParameter(1, productOptionId)
+                .setParameter(2, productId)
+                .setParameter(3, optionId)
+                .setParameter(4, optionValueId);
+        query.executeUpdate();
+    }
+
+    @Override
+    public int getProductOptionId(int productId, int optionId) {
         try {
-            return (List<ProductFreeRun>) query.getResultList();
-        } catch (NoResultException e) {
-            return Collections.emptyList();
+            return (int) em.createQuery("select p.productOptionId from ProductOptionFR p where p.productId = :productId and p.optionId = :optionId").
+                    setParameter("productId", productId).
+                    setParameter("optionId", optionId).
+                    getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         }
+    }
+
+    @Override
+    public boolean findProductByOptionNameId(int commonOptionName, int productId) {
+            return (boolean) em.createQuery("select case when count(p.productOptionId) = 1 then true else false end from ProductOptionFR p where p.optionId= :commonOptionName and p.productId= :productId").
+                    setParameter("commonOptionName", commonOptionName).
+                    setParameter("productId", productId).
+                    getSingleResult();
     }
 }
