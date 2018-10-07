@@ -160,7 +160,7 @@ public class CommonServiceImpl implements CommonService {
 
     private BigDecimal getPrice(String price) {
         double value = Double.valueOf(price);
-        value = value * 26.5 + 250;
+        value = value * 28.5 + 300;
         int intPrice = (int) value;
         return new BigDecimal(intPrice);
     }

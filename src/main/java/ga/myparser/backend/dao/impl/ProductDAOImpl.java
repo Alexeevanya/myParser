@@ -19,13 +19,13 @@ public class ProductDAOImpl implements ProductDAO {
     private EntityManager em;
 
     @Override
-    public int getIdBySku(String sku) {
+    public List<Integer> getIdBySku(String sku) {
+        Query query = em.createQuery("select p.id from ProductFreeRun p where p.sku = :sku");
+        query.setParameter("sku", sku);
         try {
-            return (int) em.createQuery("select p.id from ProductFreeRun p where p.sku = :sku")
-                    .setParameter("sku", sku)
-                    .getSingleResult();
+            return (List<Integer>) query.getResultList();
         } catch (NoResultException e){
-            return 0;
+            return Collections.EMPTY_LIST;
         }
     }
 

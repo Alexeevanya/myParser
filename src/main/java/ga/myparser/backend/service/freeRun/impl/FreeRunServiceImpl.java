@@ -60,44 +60,46 @@ public class FreeRunServiceImpl implements FreeRunService {
 
         for (ProductFreeRunToUpdate update : updates) {
             String sku = update.getSku();
-            int id = productDAO.getIdBySku(sku);
-            if (id == 0) {
+            List<Integer> listId = productDAO.getIdBySku(sku);
+            if (listId.isEmpty()) {
                 continue;
             }
-            int quantity = update.getQuantity();
-            BigDecimal price = update.getPrice();
+            for (Integer id : listId) {
+                int quantity = update.getQuantity();
+                BigDecimal price = update.getPrice();
 
-            int commonOptionName = 13;
-            int childOptionName = 17;
-            int optionId = 0;
-            Set<Integer> options = Collections.emptySet();
+                int commonOptionName = 13;
+                int childOptionName = 17;
+                int optionId = 0;
+                Set<Integer> options = Collections.emptySet();
 
-            boolean findManAndWomanOption = productDAO.findProductByOptionNameId(commonOptionName, id);
-            if(findManAndWomanOption){
-                options = convertCommonOptions(update.getOptions());
-                productDAO.deleteOldOptions(id, commonOptionName);
-                optionId = commonOptionName;
-            }
+                boolean findManAndWomanOption = productDAO.findProductByOptionNameId(commonOptionName, id);
+                if (findManAndWomanOption) {
+                    options = convertCommonOptions(update.getOptions());
+                    productDAO.deleteOldOptions(id, commonOptionName);
+                    optionId = commonOptionName;
+                }
 
-            boolean findChildOption = productDAO.findProductByOptionNameId(childOptionName, id);
-            if(findChildOption){
-                options = convertChildOptions(update.getOptions());
-                productDAO.deleteOldOptions(id, childOptionName);
-                optionId = childOptionName;
-            }
+                boolean findChildOption = productDAO.findProductByOptionNameId(childOptionName, id);
+                if (findChildOption) {
+                    options = convertChildOptions(update.getOptions());
+                    productDAO.deleteOldOptions(id, childOptionName);
+                    optionId = childOptionName;
+                }
 
-            if(!findChildOption && !findManAndWomanOption){
+                if (!findChildOption && !findManAndWomanOption) {
+                    ProductFreeRunToUpdate myProduct = new ProductFreeRunToUpdate(
+                            id, sku, quantity, price, optionId, options
+                    );
+                    myProductsToUpdate.add(myProduct);
+                    continue;
+                }
+
                 ProductFreeRunToUpdate myProduct = new ProductFreeRunToUpdate(
                         id, sku, quantity, price, optionId, options
                 );
                 myProductsToUpdate.add(myProduct);
-                continue;
             }
-
-            ProductFreeRunToUpdate myProduct = new ProductFreeRunToUpdate(
-                    id, sku, quantity, price, optionId, options
-            );
-            myProductsToUpdate.add(myProduct);
         }
         return myProductsToUpdate;
     }
