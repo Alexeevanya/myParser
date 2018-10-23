@@ -22,12 +22,21 @@ public class RootController {
         return "index";
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/PoolParty/", method = RequestMethod.POST)
     public String startUpdatePoolParty(Model model){
-        log.info("Custom update products PoopParty start");
+        log.info("Custom update products PoolParty start");
         commonService.updateSneakersPoolParty();
-        log.info("Custom update products PoopParty finish");
-        model.addAttribute("status", "Update completed");
+        log.info("Custom update products PoolParty finish");
+        model.addAttribute("statusPP", "Update PoolParty completed");
+        return "index";
+    }
+
+    @RequestMapping(value = "/FreeRun/", method = RequestMethod.POST)
+    public String startUpdateFreeRun(Model model){
+        log.info("Custom update products FreeRun start");
+        commonService.updateSneakersFreeRun();
+        log.info("Custom update products FreeRun finish");
+        model.addAttribute("statusFR", "Update FreeRun completed");
         return "index";
     }
 
